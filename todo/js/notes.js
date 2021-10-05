@@ -1,4 +1,5 @@
-function Note(t,c){
+//constructeur de notes
+function Note(t,c) {
 	this.titre = t;
 	this.contenu= c;
 	this.date_creation = new Date();
@@ -11,141 +12,107 @@ function Note(t,c){
 		this.contenu = c;
 	}
 }
-	//un objet
+//vue du formulaire
 let noteFormView = {
 		display(){
-			//on select l'id noteForm
-			//on enlève un élément CSS
-			//correspond à un dispay : none en CSS (on l'enlève, on affiche le formulaire)
+			//suppression de la classe create_edit_note-hidden pour afficher l'éditeur
 			document.querySelector("#noteForm").classList.remove('create_edit_note-hidden');
 		},
 		
 		hide(){
-			//on l'add (on cache le formulaire)
+			//on met la classe pour masquer l'éditeur
 			document.querySelector("#noteForm").classList.add('create_edit_note-hidden');
 		},
-		
-		//permet d'afficher l'objet note
+		//initialisation d'une nouvelle note +
 		validate(){
 			//on met dans t la valeur du titre
 			let t = document.querySelector('#form_add_note_title').value;
 			//on met dans c la valeur du contenu
 			let c = document.querySelector('#form_add_note_text').value;
 			let n = new Note(t,c);
-			//on appel la méthode de l'objet noteView
-			// i renvoie un indice
-			//let i = noteList.addNote(n);
-			//console.log(i);
+
+			//hide le formulaire
 			noteFormView.hide();
+
+			//a voir
 			noteView.afficher(n); 
 			noteListView.displayItem(n);
-			},
-		
-		edit(){
-			if (!noteListView.currentNodeView){
-				return;
-			}
-		
-		let note = noteList.get(noteListView.currentNodeList.id);
-		let form = document.querySelector('#noteForm');
-		form.children[0].value = note.titre;
-		form.children[1].value = note.contenu;
-		this.editNote = true;
-		noteFormView.display();
-			
 		},
-		
-		editNote : false
+		edit(){
+			//TODO
+		},
 }
-
+//vue du contenu du note (container du milieu)
 let noteView = {
 		//méthode de conversion pour l'afficher convenablement
 		convertir(note){
 			let markdownText = `# ${note.titre}
 								${note.date_creation.toLocaleString()}
 								${note.contenu}`
-			//?Conversion en HTML?				
+			//converteur							
 			let conv = new showdown.Converter();
+			//format HTML
 			let htmlText = conv.makeHtml(markdownText);
 			
 			return htmlText;
 		},
-		
-		afficher(note){														//on utilise la méthode convertir
+		//afficher le contenu d'une note
+		afficher(note){
 			document.querySelector("#currentNoteView").innerHTML = this.convertir(note);
 		},
-		
+		//cacher le contenu d'une note (utilisé dans le delete)
 		hide(){
 			document.querySelector('#currentNoteView').innerHTML = '';
 		}
 }
 
 let noteList = {
+	//propriété de l'objet, pas une variable
+	list : [],
 		
-		 list : [],
-		
-		addNote(note){
-				
-			 	//affiche la liste de note
-				//noteListView.displayItem(note);
-				let indice = this.list.push(note);
-				
-				this.save();
-				
-				// retourne l'indice de la note
-				return indice;
-			},
+	addNote(note){		
+		//noteListView.displayItem(note);
+		let indice = list.push(note);
+		noteList.save();
+		return indice;
+		},
 
-		get(n){
-			return this.list[n];
-		},
-		
-		getList(){
-			return this.list;
-		},
-		
-		save(){
-			//on enleve l'ancienne liste a chaque save
-			localStorage.removeItem('listNotes');
-			//on set le contenu à la liste actuelle
-			localStorage.setItem('listNotes', JSON.stringify(this.list));
-		},
-		
-		load(){
-			let tmp = JSON.parse(localStorage.getItem('listNotes'));
-			if(tmp){
-				this.list = tmp;
-			}
-		},
-		
-		editNote(i, modif){
-			this.list[i].setTitre(modif.titre);
-			this.list[i].setContenu(modif.contenu);
-			this.save();
-			return this.list[i];
-		},
-		
-		delete(i){
-			console.log(i)
-						
-			console.log(noteList.list);
-
-			noteList.list.splice(i,1);
-			//delete noteList.list[i];
-			
-			console.log(noteList.list);
-
-			
-			this.save();
-			mainMenuView.redo();
-			mainMenuView.init();
+	get(n){
+		return list[n];
+	},
+	
+	save(){
+		//on enleve l'ancienne liste a chaque save
+		localStorage.removeItem('listNotes');
+		//on set le contenu à la liste actuelle
+		localStorage.setItem('listNotes', JSON.stringify(list));
+	},
+	
+	load(){
+		let tmp = JSON.parse(localStorage.getItem('listNotes'));
+		if(tmp){
+			list = tmp;
 		}
-		
+	},
+	
+	editNote(i, modif){
+		list[i].setTitre(modif.titre);
+		list[i].setContenu(modif.contenu);
+		save();
+		return list[i];
+	},
+	
+	delete(i){
+		noteList.list.splice(i,1);
+		//delete noteList.list[i];
+		save();
+		mainMenuView.init();
+	}		
 }
 
 let noteListView = {
 		
-		currentNodeNote : null,
+	currentNodeNote : null,
 		
     displayItem(note, i=null) {
     	/*//dans t on met sous forme de TextNode la note avec le titre et la date
@@ -218,48 +185,41 @@ let noteListView = {
 }
 
 let mainMenuView = {
-		addHandler(){
-			//afficher le formulaire
-			noteFormView.display();
-		},
+	addHandler(){
+		//afficher le formulaire
+		noteFormView.display();
+	},
+
+	init(){
+		//bouton plus
+		document.querySelector("#add").addEventListener("click", this.addHandler);
+		//bouton valider
+		document.querySelector("#form_add_note_valid").addEventListener("click",noteFormView.validate);
+		//bouton edit
+		document.querySelector('#edit').addEventListener("click",noteFormView.edit);
+		//bouton supprimer
+		document.querySelector('#del').addEventListener("click",noteListView.delete);
+		noteList.load();
 		
-		init(){
-			//en cliquant on appel la méthode addHandler donc on display
-			document.querySelector("#add").addEventListener("click",this.addHandler);
-			//en cliquant on appel la validate de noteFormView addHandler donc on "valide la note", on l'affiche en entier (objet note)
-			document.querySelector("#form_add_note_valid").addEventListener("click",noteFormView.validate);
-			document.querySelector('#edit').addEventListener("click",noteFormView.edit);
-			document.querySelector('#del').addEventListener("click",noteListView.delete);
-			noteList.load();
-			
-			if(noteList.list){
-				noteList.list.forEach((note, i) => {
-					noteListView.displayItem(note, i);
-				})
-				
-			}
-		
-		},
-		
-		redo(){
+		if(noteList.list){
 			noteList.list.forEach((note, i) => {
 				noteListView.displayItem(note, i);
 			})
-		
+			
 		}
-		
-}
+
+	}
+}	
+
 
 let app = {
 		note : null,
 		indiceCourant : null,
-		
 		init(){
 			//on génère le tout.
 			mainMenuView.init()
 		}
 }
-
 
  //on appel la méthode pour générer le tout
 window.onload = app.init;
