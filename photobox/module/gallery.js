@@ -5,8 +5,8 @@ let gallery = document.querySelector("#photobox-gallery");
 let currentMax;
 let currentMin;
 let container = document.createElement("div");
-container.setAttribute("id", "container-vig-load");
-container.setAttribute("class", "gallery-container");
+    container.setAttribute("id", "container-vig-load");
+    container.setAttribute("class", "gallery-container");
 //init container vide
 gallery.appendChild(container);
 
@@ -23,7 +23,7 @@ export function loadG() {
   currentMax = 15
 }
 
-export function editDom(tabl) {""
+export function editDom(tabl) {
   //suppresion du contenu de la galerie à chaque load
   document.getElementById("container-vig-load").innerHTML = ""
   
@@ -61,7 +61,7 @@ export function editDom(tabl) {""
 function paginateur(elementId){
   if (elementId == "previous") {
     if (currentMin == 0) {
-      //do nothing
+      alert("Pas de page précédente");
     } else {
       currentMin-=15;
       currentMax-=15;
@@ -69,7 +69,7 @@ function paginateur(elementId){
     }
   } else if (elementId == "next") {
     if (currentMax == 5000) {
-      //do nothing
+      alert("Pas de page suivante");
     } else {
       currentMin+=15;
       currentMax+=15;
