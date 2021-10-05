@@ -1,4 +1,4 @@
-import { load } from "./photoloader.js";
+import { jsonData } from "./gallery.js";
 
 let elementCourantId;
 
@@ -53,7 +53,7 @@ function enleverLightbox() {
 }
 
 function reload(string){
-  load("/photos").then(json => changerImage(json, string));
+  changerImage(jsonData, string);
 }
 
 function changerImage(json, string) {
