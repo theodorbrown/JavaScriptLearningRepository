@@ -1,7 +1,7 @@
 export function paginate(
     totalItems,
     currentPage = 1,
-    pageSize = 50,
+    pageSize = 15,
     maxPages = 1000
 ) {
     // calculate total pages

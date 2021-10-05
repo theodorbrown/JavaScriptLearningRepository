@@ -8,32 +8,29 @@ export function afficherLightbox(element) {
   const gallery = document.querySelector("#photobox-gallery");
 
   const lightbox = document.createElement("div");
-  lightbox.setAttribute("class", "lightbox_container");
-  lightbox.setAttribute("id", "lightbox_container");
-
   lightbox.innerHTML = `
-    <div class="lightbox_container" id="lightbox_container">
+    <div class="lightbox_container bg-secondary" id="lightbox_container">
         <div id="lightbox">
             <div id="lightbox-head">
                 <button type="button" class="close" id="lightbox_close" aria-label="Close">
                     <span aria-hidden="true">&Chi;</span>
                 </button>
-                <h1 id="lightbox_title" class="text-center">${element.title}</h1>
+                <h1 id="lightbox_title" class="text-center bg-dark">${element.title}</h1>
             </div>
 
             <div id="lightbox-img">
-                <img id="lightbox_full_img" src="${element.url}">
+                <img id="lightbox_full_img" src="${element.url}" style="width:450px;height:300px;">
             </div>
             <div class="row">
-            <div class="col text-center">
+            <div class="col text-center p-2">
             <button id="prev" type="button" class="btn btn-warning">Précédent</button>
             </div>
-            <div class="col text-center">
+            <div class="col text-center p-2">
             <button id="nxt" type="button" class="btn btn-warning">Suivant</button>
             </div>
             </div>
 
-            <div class="bg-white p-2">
+            <div class="p-2">
                 <h3 class="text-center">Description</h3>
                 <p class="text-center">Id : ${element.id}</p>
                 <p class="text-center">AlbumId : ${element.albumId}</p>
@@ -49,7 +46,6 @@ export function afficherLightbox(element) {
 
   document.querySelector("#prev").addEventListener("click", () => reload("prev"));
   document.querySelector("#nxt").addEventListener("click", () => reload("next"));
-
 }
 
 function enleverLightbox() {
@@ -61,25 +57,28 @@ function reload(string){
 }
 
 function changerImage(json, string) {
+  //On enlève la lightbox courante, pour vider le DOM.
   enleverLightbox();
-  if (elementCourantId == 1) {
-    alert("Pas d'élément précédent");
-    console.log("onnard")
-  } else if (elementCourantId == 5000) {
-    alert("Pas d'élément suivant");
-    console.log("fdp")
-  }else{
+
   //élément courant
   let res = json.data.filter(element => element.id == elementCourantId);
-
+  
   if (string == "next") {
-    let nextelement = json.data.filter(element => element.id == (res[0].id)+1)
-    var elementToLoad1 = nextelement[0];
-    afficherLightbox(elementToLoad1);
+    if (elementCourantId == 5000) {
+      alert("Pas d'élément suivant");
+    } else {
+      let nextelement = json.data.filter(element => element.id == (res[0].id)+1)
+      var elementToLoad1 = nextelement[0];
+      //on édite le DOM
+      afficherLightbox(elementToLoad1);
+    }
   } else if (string == "prev"){
-    let prevelement = json.data.filter(element => element.id == (res[0].id)-1)
-    var elementToLoad2 = prevelement[0];
-    afficherLightbox(elementToLoad2);
-  }
+    if (elementCourantId == 1) {
+      alert("Pas d'élément précédent");
+    } else {
+      let prevelement = json.data.filter(element => element.id == (res[0].id)-1)
+      var elementToLoad2 = prevelement[0];
+      afficherLightbox(elementToLoad2);
+    }
   }
 }
