@@ -2,7 +2,6 @@ import { load } from "./photoloader.js";
 import { afficherLightbox } from "./lightbox.js";
 import { paginate } from "./pagination.js";
 
-let gallery = document.querySelector("#photobox-gallery");
 let currentMax;
 let currentMin;
 
@@ -12,12 +11,19 @@ export function loadG() {
   //on load -> on affiche les 15 premières entrées.
   currentMin = 0
   currentMax = 15
-
 }
 
 export function editDom(tabl) {
+  //suppresion du contenu de la galerie
+  document.getElementById("photobox-gallery").remove();
+  //on la remet vide
+  let renew = document.createElement('div');
+  renew.setAttribute("id", "photobox-gallery");
+  renew.setAttribute("class", "gallery-container");
+
+  var gallery = document.querySelector("#photobox-gallery");
+
   //334 pages pour 15 par page
-  console.log(paginate(5000));
   tabl.data.slice(currentMin,currentMax).forEach((e) => {
     let div = document.createElement("div");
     //class="vignette"
@@ -42,4 +48,29 @@ export function editDom(tabl) {
     //push dans la galerie
     gallery.appendChild(div);
   });
+}
+
+function paginateur(elementId){
+  if (elementId == "previous") {
+    if (currentMin == 0) {
+      //do nothing
+    } else {
+      currentMin-=15;
+      currentMax-=15;
+    }
+  } else if (elementId == "next") {
+    if (currentMax == 5000) {
+      //do nothing
+    } else {
+      currentMin+=15;
+      currentMax+=15;
+    }
+  } else {
+    alert("erreur non identifiée");
+  }
+}
+
+export function controlPages() {
+  document.getElementById("previous").addEventListener("click", (e) => paginateur(e.target.id));
+  document.getElementById("next").addEventListener("click", (e) => paginateur(e.target.id));
 }

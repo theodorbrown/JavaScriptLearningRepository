@@ -1,6 +1,7 @@
 import { loadG } from "./gallery.js";
+import { controlPages } from "./gallery.js"
 
 window.onload = () => {
-  const btn = document.getElementById("load_gallery");
-  btn.addEventListener("click", loadG);
+  document.getElementById("load_gallery").addEventListener("click", loadG);
+  controlPages();
 };
