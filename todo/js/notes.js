@@ -31,6 +31,8 @@ let noteFormView = {
 			let note = noteList.list.filter(e => e.id == noteListView.note.id);
 			note[0].titre = t;
 			note[0].contenu = c;
+			//update date
+			note[0].date_creation = new Date();
 			noteFormView.isEdit = false;
 		} else {
 			let n = new Note(t,c);
