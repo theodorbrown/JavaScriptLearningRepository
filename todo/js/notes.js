@@ -10,7 +10,6 @@ function Note(t,c) {
 let noteFormView = {
 
 	isEdit: false,
-	noteId: 0,
 
 	display(){
 		//suppression de la classe create_edit_note-hidden pour afficher l'éditeur
@@ -29,11 +28,10 @@ let noteFormView = {
 		let c = document.querySelector('#form_add_note_text').value;
 
 		if (noteFormView.isEdit){
-			let note = noteList.list.filter(e => e.id == noteFormView.noteId);
-			console.log(noteList.list)
-			console.log(note)
+			let note = noteList.list.filter(e => e.id == noteListView.note.id);
 			note[0].titre = t;
 			note[0].contenu = c;
+			noteFormView.isEdit = false;
 		} else {
 			let n = new Note(t,c);
 			//ajoute la note au tableau
@@ -47,12 +45,10 @@ let noteFormView = {
 		noteList.load();
 		//hide le formulaire
 		noteFormView.hide();
-		console.log(noteList.list);
 	},
 	edit(){
 		if(noteListView.note != null){
 			noteFormView.isEdit = true;
-			noteFormView.noteId = noteListView.note.id;
 			noteFormView.display();
 			document.querySelector('#form_add_note_title').value = noteListView.note.titre;
 			document.querySelector('#form_add_note_text').value = noteListView.note.contenu;
@@ -121,6 +117,20 @@ let noteList = {
 	},
 
 	delete(){
+		//noteListView.note.id
+		if(noteListView.note != null){
+		let filtered = noteList.list.filter((e) => e.id != noteListView.note.id);
+		//on ecrase le tableau par le nouveau filtré
+		noteList.list = filtered;
+
+		//save to localstorage
+		noteList.save();
+		//vide la section et load le tableau avec les infos à jour
+		noteList.load();
+
+		} else {
+			alert("Cliquez sur une note pour valider un choix");
+		}
 	}		
 }
 
@@ -174,7 +184,7 @@ let mainMenuView = {
 		//bouton edit
 		document.querySelector('#edit').addEventListener("click",noteFormView.edit);
 		//bouton supprimer
-		document.querySelector('#del').addEventListener("click",noteListView.delete);
+		document.querySelector('#del').addEventListener("click",noteList.delete);
 		//charge le local storage
 		noteList.load();
 	}
