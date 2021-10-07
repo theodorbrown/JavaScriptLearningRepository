@@ -146,11 +146,12 @@ let noteListView = {
     	tmpHtml.classList.add('note_list_item');
     	tmpHtml.innerHTML = note.titre;
 
-		//seleciton de la note courante (surbrillance avec une classe)
+		//seleciton de la note courante (surbrillance avec une classe) apres un add
 		this.selectCurrentNote(tmpHtml);
 
 		//target l'element en lui même (ici l'élément du DOM)
 		tmpHtml.addEventListener("click", (e) => {
+			//lors d'un click dans la section
 			this.selectCurrentNote(e.target, note);
 			noteView.afficher(note);
 			noteFormView.hide();
